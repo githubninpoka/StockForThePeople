@@ -23,9 +23,11 @@ Done:
 - Set up serilog
 - First version of domain models and external DTOs
 - ExternalData service receives and processes data
+- InternalData service feeds the WebApi
 - Set up first database from EF core
 - Use both postman and insomnia for testing
 - Use chart.js
+- setup a simple outputcache in the WebApi
 
 - Store data:
 - Monthly (manual process)
@@ -34,13 +36,19 @@ Done:
 - First graph page done
 - 
 Next:
-- work on another graph page: does the difference between high/low say something really about volatility of value
-- work on another graph page: multiselect assets and show if their volume and or value correlate
-- build first component library
+Technically:
+- build first component library for more separation of concerns and reusability
 - think about making separate chart.js components
 - think about making a generic linechart that can handle multiple or single incoming data arrays
-- work on making the api calls (internal and external) a bit more fault tolerant.
+- work on making the api calls (internal and external) a bit more fault tolerant. (cancellation tokens, alert actions)
 - think about a good way to have the external update service just trigger on a (?) timer
+- Make 2 services (one for when blazor is running serverside and the other for when blazor is running webassembly) to make the blazor pages & components cleaner.
+- see if I can do a simple unit test that gets data from an external mock api, puts it in memory database, and retrieves it from the api.
+
+Next:
+Functionally:
+- work on another graph page: does the difference between high/low say something really about volatility of value
+- work on another graph page: multiselect assets and show if their volume and or value correlate
 - see if there are any other more precise external data sources available
 
 Patterns & design:
