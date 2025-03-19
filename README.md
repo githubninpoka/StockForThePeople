@@ -2,6 +2,11 @@
 
 ![image](https://github.com/user-attachments/assets/c2b4f25f-5593-4fde-aac9-e69a975484a0)
 
+Bespreken met Rick:
+- mijn 'service' doet de vertaalslag tussen DTO en domein modellen. zowel van buiten naar binnen als van binnen naar buiten. Doordat de service een referentie heeft naar die modellen, hebben de webapi en het blazorproject dat allebei ook. Is dat okay? dat je frontend toegang heeft tot je domein modellen?
+- hoe zou jij omgaan met een job die 1 x per dag moet draaien (het ophalen van de koersen)
+- wat zou een goeie unit test zijn om te maken
+- 
 
 The goal of this application is to allow casual investors to analyze the progress of their portfolio.
 Ever notice how you can't really track how well one asset is doing compared to another? That's on purpose.
