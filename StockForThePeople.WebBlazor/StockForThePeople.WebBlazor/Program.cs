@@ -48,7 +48,9 @@ namespace StockForThePeople.WebBlazor
             app.MapRazorComponents<App>()
                 .AddInteractiveServerRenderMode()
                 .AddInteractiveWebAssemblyRenderMode()
+                .AddAdditionalAssemblies(typeof(BlazorComponentsLibrary.ForUsingInBlazor.ForUsingInBlazor).Assembly)
                 .AddAdditionalAssemblies(typeof(Client._Imports).Assembly);
+                
 
             app.Run();
         }

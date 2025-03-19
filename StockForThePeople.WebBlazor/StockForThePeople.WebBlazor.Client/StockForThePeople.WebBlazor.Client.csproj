@@ -17,9 +17,10 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.13" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\StockForThePeople.WebApiExecuter\StockForThePeople.WebApiExecuter.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\StockForThePeople.BlazorComponentsLibrary\StockForThePeople.BlazorComponentsLibrary.csproj" />
+		<ProjectReference Include="..\..\StockForThePeople.WebApiExecuter\StockForThePeople.WebApiExecuter.csproj" />
+	</ItemGroup>
 
   <ItemGroup>
     <Content Update="Pages\MonthlyHighLowPerAsset.razor">

@@ -6,6 +6,7 @@ Bespreken met Rick:
 - mijn 'service' doet de vertaalslag tussen DTO en domein modellen. zowel van buiten naar binnen als van binnen naar buiten. Doordat de service een referentie heeft naar die modellen, hebben de webapi en het blazorproject dat allebei ook. Is dat okay? dat je frontend toegang heeft tot je domein modellen?
 - hoe zou jij omgaan met een job die 1 x per dag moet draaien (het ophalen van de koersen)
 - wat zou een goeie unit test zijn om te maken
+- nog iets over DTO's. In mijn solution heb ik in het blazor project een DTO folder met DTOs. Als ik wil werken met een Component Library, dan moet die Component Library kennis hebben van de DTOs. Maar ik kan geen circulaire project referentie opnemen natuurlijk. Is het normaal om, naast je domeinmodellen, ook je DTOs in een apart project te plaatsen? Ook als die 'alleen' bedoeld zijn voor, in mijn geval, de externe data naar binnen halen (WebApi extern), het response model te maken (WebApi intern) en data te tonen in Blazor (Blazor Componenten).
 - 
 
 The goal of this application is to allow casual investors to analyze the progress of their portfolio.
@@ -67,3 +68,8 @@ Learnt:
 - javascript is very much case sensitive (hard lesson)
 - webassembly does not use appsettings in the same way as other asp .net core applications (hard lesson)
 - 
+
+Good books:
+- Web Development with Blazor, Third Edition, Copyright © 2024 Packt Publishing
+- - Reiterating over all the concepts that I already knew
+	- Explained how to setup a component library in blazor.
