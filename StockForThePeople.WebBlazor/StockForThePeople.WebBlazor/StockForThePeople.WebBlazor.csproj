@@ -8,7 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\StockForThePeople.BlazorComponentsLibrary\StockForThePeople.BlazorComponentsLibrary.csproj" />
     <ProjectReference Include="..\..\StockForThePeople.WebApiExecuter\StockForThePeople.WebApiExecuter.csproj" />
     <ProjectReference Include="..\StockForThePeople.WebBlazor.Client\StockForThePeople.WebBlazor.Client.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.13" />

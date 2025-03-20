@@ -34,6 +34,7 @@ Done:
 - Use both postman and insomnia for testing
 - Use chart.js
 - setup a simple outputcache in the WebApi
+- Decided to NOT implement a separate Component Library for now.
 
 - Store data:
 - Monthly (manual process)

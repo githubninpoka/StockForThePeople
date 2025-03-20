@@ -1,8 +1,9 @@
 ﻿@page "/MonthlyHighLowPerAsset"
+@page "/"
 @using System.Globalization
 @inject IWebApiExecuter _api
 @inject StockForThePeopleSettings _stockForThePeopleSettings
-@inject ILogger<MonthlyPerAsset> _logger
+@inject ILogger<MonthlyHighLowPerAsset> _logger
 
 <h3>Volumes versus verschil HighLow per dag</h3>
 De gedachte is: er moet een herleidbaar verband zijn tussen het verschil in High en Low van een aandeel en de hoeveelheid verhandelde aandelen
@@ -11,21 +12,20 @@ De gedachte is: er moet een herleidbaar verband zijn tussen het verschil in High
 
 @if (volumes is not null && selectedTicker is not null)
 {
-    <div class="d-inline-flex" style="border-style:dotted;border-width:thick;border-color:cyan;height:600px">
-        <LineChart Id=0 Type="@LineChart.ChartType.Line"
-                    AssetName=@singleAssetWithMarketData.Asset.Name
-                   Volumes="volumes"
-                   Values="values"
-                   Labels="dates">
+    <div class="d-inline-flex" style="height:600px;border-style:solid;border-width:thin;border-color:black">
+        <LineChart Id=0 LineChartConfiguration="lineChartConfiguration">
         </LineChart>
     </div>
 }
 
 @code {
+    private LineChartConfiguration lineChartConfiguration;
+
     private AssetWithMarketGetDto singleAssetWithMarketData;
     private double[] volumes;
     private double[] values;
     private string[] dates;
+    private double[] volumeBaseLine;
 
     [Parameter]
     public string selectedTicker { get; set; }
@@ -46,20 +46,98 @@ De gedachte is: er moet een herleidbaar verband zijn tussen het verschil in High
         {
             _logger.LogInformation("calling elvis");
             _api.BaseUrl = _stockForThePeopleSettings.BaseUrl;
-            
+
             singleAssetWithMarketData = await _api.InvokeGetAsync<AssetWithMarketGetDto>(fullUri);
             foreach (var item in singleAssetWithMarketData.MarketHistory)
             {
                 //volumesList.Add(Math.Round(item.VolumeComparedToAverage / 100, 1).ToString(CultureInfo.CreateSpecificCulture("en-US")));
                 volumesList.Add(Math.Round(item.VolumeComparedToAverage / 100, 1));
                 //valuesList.Add(item.Value.ToString(CultureInfo.CreateSpecificCulture("en-US")));
-                valuesList.Add((double)item.High - (double)item.Low);
+                valuesList.Add((double)item.Value);
+                //valuesList.Add((double)item.High - (double)item.Low);
                 datesList.Add(item.Date.ToString());
             }
             volumes = volumesList.ToArray();
             values = valuesList.ToArray();
             dates = datesList.ToArray();
+            volumeBaseLine = new double[volumes.Length];
+            for (int i = 0; i< volumeBaseLine.Length;i++){
+                volumeBaseLine[i] = 1;
+            }
         }
+        lineChartConfiguration = new LineChartConfiguration()
+            {
+                LineChartOptions = new LineChartOptions()
+                {
+                    ChartTitle = $"Dit gaat over {singleAssetWithMarketData.Asset.Name}",
+                    Responsive = true,
+                    Scales = new ChartAxes()
+                    {
+                        LeftAxis = new ChartAxis()
+                        {
+                            Title = new ChartAxisTitle(){ 
+                                Text = "Dagvolume",
+                                Display = true
+                            },
+                            Display = true,
+                            BeginAtZero = true,
+                            Grid = new ChartAxisGrid()
+                            {
+                                Display = true
+                            }
+                        },
+                        RightAxis = new ChartAxis()
+                        {
+                            Title = new ChartAxisTitle(){
+                                Text="Waarde",
+                                Display=true
+                            },
+                            Display = true,
+                            Position = "right",
+                            BeginAtZero = false,
+                            Min = values.Min() - 1,
+                            Max = values.Max() + 1,
+                            Grid = new ChartAxisGrid(){
+                                Display = false
+                            }
+                        }
+                    }
+                },
+                Data = new ChartDataSets()
+                {
+                    DataSets = new ChartDataSet[] {
+                        new ChartDataSet(){
+                            Data = volumeBaseLine,
+                            BorderColor="black",
+                            YAxisId="leftaxis",
+                            Label="Gemiddeld maandvolume"
+                        },
+                        new ChartDataSet(){
+                            Data=volumes,
+                            BorderColor="grey",
+                            Stepped="middle",
+                            YAxisId="leftaxis",
+                            Label="Volumes",
+                            Fill = true,
+                            PointStyle = "dash"
+                        },
+                        new ChartDataSet(){
+                            Data=values,
+                            BorderColor="green",
+                            Stepped="",
+                            YAxisId="rightaxis",
+                            Label="Waardes"
+                        }
+
+                    },
+                    Labels = new LineChartLabels()
+                    {
+                        Labels = dates
+                    }
+
+                }
+
+            };
     }
 
     protected override async Task OnInitializedAsync()

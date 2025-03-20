@@ -1,0 +1,129 @@
+﻿@inject IJSRuntime JSRuntime
+@inject ILogger<XLineChart> _logger
+@implements IDisposable
+
+<canvas id="@Id"></canvas>
+
+@code {
+    public enum ChartType
+    {
+        Pie,
+        Bar,
+        Line
+    }
+
+    [Parameter]
+    public string Id { get; set; }
+
+    [Parameter]
+    public ChartType Type { get; set; }
+
+    [Parameter]
+    public string AssetName { get; set; }
+
+    [Parameter]
+    public double[] Volumes { get; set; }
+
+    [Parameter]
+    public double[] Values { get; set; }
+
+    [Parameter]
+    public string[] Labels { get; set; }
+
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await JSRuntime.InvokeVoidAsync("reset");
+
+        // Here we create an anonymous type with all the options
+        // that need to be sent to Chart.js
+        var config = new
+        {
+            type = Type.ToString().ToLower(),
+            options = new
+            {
+                plugins = new
+                {
+                    Title = new
+                    {
+                        Text = "Maandelijkse volumes en koers van " + AssetName,
+                        Display = true
+                    }
+                },
+                Responsive = true,
+                scales = new
+                {
+                    volumeaxis = new
+                    {
+                        //id = "volumeaxis",
+                        type = "linear",
+                        title = new { Display = true, Text = "Dagvolume" },
+                        position = "left",
+                        display = true,
+                        beginAtZero = true,
+                    },
+                    valueaxis = new
+                    {
+                        //id = "valueaxis",
+                        type = "linear",
+                        title = new { Display = true, Text = "Waarde" },
+                        position = "right",
+                        display = true,
+                        beginAtZero = false,
+                        grid = new
+                        {
+                            display = false
+                        },
+                        Min = Values.Min() - 1,
+                        Max = Values.Max() + 1,
+
+                    },
+                }
+            },
+            data = new
+            {
+                labels = Labels,
+                datasets = new[]
+                {
+                 new {
+                        data = Values,
+                        borderColor =  "grey",
+                        stepped = "middle",
+                        yAxisID = "valueaxis",
+                        label = "Waarde",
+                        fill = false,
+                        //parsing = new { yAxisKey = "valueaxis" }
+                    },
+                       new {
+                        data = Volumes,
+                        borderColor = "green",
+                        stepped = "middle",
+                        yAxisID = "volumeaxis",
+                        label = "DagVolumes",
+                        fill = false,
+                        //parsing = new { yAxisKey = "volumeaxis" }
+                    }
+
+                },
+
+            }
+        };
+        _logger.LogInformation("HIERO");
+        await JSRuntime.InvokeVoidAsync("setup", Id, config);
+    }
+
+
+
+
+    public async void Dispose()
+    {
+        _logger.LogInformation("LineChart - Dispose");
+        // Call JavaScript to destroy the chart
+        // from the logs I read that calling the JS Interop is not possible while the component
+        // is being disposed of...
+
+        //await JSRuntime.InvokeVoidAsync("dispose");
+
+    }
+}

@@ -1,35 +1,16 @@
 ﻿@inject IJSRuntime JSRuntime
 @inject ILogger<LineChart> _logger
-@implements IDisposable
 
+@* a chart needs a canvas *@
 <canvas id="@Id"></canvas>
 
 @code {
-    public enum ChartType
-    {
-        Pie,
-        Bar,
-        Line
-    }
+
+    [Parameter]
+    public LineChartConfiguration? LineChartConfiguration { get; set; }
 
     [Parameter]
     public string Id { get; set; }
-
-    [Parameter]
-    public ChartType Type { get; set; }
-
-    [Parameter]
-    public string AssetName { get; set; }
-
-    [Parameter]
-    public double[] Volumes { get; set; }
-
-    [Parameter]
-    public double[] Values { get; set; }
-
-    [Parameter]
-    public string[] Labels { get; set; }
-
 
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -38,91 +19,69 @@
 
         // Here we create an anonymous type with all the options
         // that need to be sent to Chart.js
-        var config = new
+        if (LineChartConfiguration is not null)
         {
-            type = Type.ToString().ToLower(),
-            options = new
+            var _dataSets = new object[LineChartConfiguration.Data.DataSets.Length] ;
+            for (int i = 0; i < LineChartConfiguration.Data.DataSets.Length; i ++)
             {
-                plugins = new
-                {
-                    Title = new
-                    {
-                        Text = "Maandelijkse volumes en koers van " + AssetName,
-                        Display = true
-                    }
-                },
-                Responsive = true,
-                scales = new
-                {
-                    volumeaxis = new
-                    {
-                        id = "volumeaxis",
-                        type = "linear",
-                        title = new { Display = true, Text = "Dagvolume" },
-                        position = "left",
-                        display = true,
-                        beginAtZero = true,
-                    },
-                    valueaxis = new
-                    {
-                        id = "valueaxis",
-                        type = "linear",
-                        title = new { Display = true, Text = "Waarde" },
-                        position = "right",
-                        display = true,
-                        beginAtZero = false,
-                        grid = new {
-                            display = false
-                        },
-                        Min = Values.Min() - 1,
-                        Max = Values.Max() + 1,
+                // the stepped property in chart.js can be bool or string.
+                // thankfully in C# it can be made to work by providing an object type.
+                object stepType = string.IsNullOrEmpty(LineChartConfiguration.Data.DataSets[i].Stepped)
+                    ? false
+                    : LineChartConfiguration.Data.DataSets[i].Stepped!;
 
-                    },
-                }
-            },
-            data = new
-            {
-                labels = Labels,
-                datasets = new[]
-                {
-                 new {
-                        data = Values,
-                        borderColor =  "grey",
-                        stepped = "middle",
-                        yAxisID = "valueaxis",
-                        label = "Waarde",
-                        fill = false,
-                        parsing = new { yAxisKey = "valueaxis" }
-                    },
-                       new {
-                        data = Volumes,
-                        borderColor = "green",
-                        stepped = "middle",
-                        yAxisID = "volumeaxis",
-                        label = "DagVolumes",
-                        fill = false,
-                        parsing = new { yAxisKey = "volumeaxis" }
-                    }
-                    
-                },
+                object pointStyle = string.IsNullOrEmpty(LineChartConfiguration.Data.DataSets[i].PointStyle)
+                    ? false
+                    : LineChartConfiguration.Data.DataSets[i].PointStyle!;
 
+                _dataSets[i] = new
+                {
+                    data = LineChartConfiguration.Data.DataSets[i].Data,
+                    borderColor = LineChartConfiguration.Data.DataSets[i].BorderColor,
+                    yAxisID= LineChartConfiguration.Data.DataSets[i].YAxisId,
+                    label= LineChartConfiguration.Data.DataSets[i].Label,
+                    stepped = stepType,
+                    fill = LineChartConfiguration.Data.DataSets[i].Fill,
+                    //borderDash = new[] { 5, 15}
+                    borderWidth= 1,
+                    pointStyle = pointStyle
+
+                };
             }
-        };
-        _logger.LogInformation("HIERO");
-        await JSRuntime.InvokeVoidAsync("setup", Id, config);
+            var config = new
+            {
+                type = LineChartConfiguration.Type,
+                options = new
+                {
+                    plugins = new
+                    {
+                        Title = new
+                        {
+                            Text = LineChartConfiguration.LineChartOptions.ChartTitle,
+                            Display = string.IsNullOrEmpty(LineChartConfiguration.LineChartOptions.ChartTitle) 
+                            ? false  
+                            : true
+        }
+                    },
+                    responsive = LineChartConfiguration.LineChartOptions.Responsive,
+
+                    scales = new
+                    {
+                        leftaxis = LineChartConfiguration.LineChartOptions.Scales.LeftAxis,
+                        rightaxis = LineChartConfiguration.LineChartOptions.Scales.RightAxis
+                    }
+                },
+                data = new
+                {
+                    labels = LineChartConfiguration.Data.Labels.Labels,
+                    datasets = _dataSets,
+
+                }
+            };
+            _logger.LogInformation("HIERO");
+            await JSRuntime.InvokeVoidAsync("setup", Id, config);
+
+        }
     }
 
-
-
-
-    public async void Dispose()
-    {
-        _logger.LogInformation("LineChart - Dispose");
-        // Call JavaScript to destroy the chart
-        // from the logs I read that calling the JS Interop is not possible while the component
-        // is being disposed of...
-
-        //await JSRuntime.InvokeVoidAsync("dispose");
-
-    }
 }

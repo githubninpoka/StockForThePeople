@@ -1,5 +1,5 @@
 ﻿@page "/MonthlyPerAsset"
-@page "/"
+
 @using System.Globalization
 @inject IWebApiExecuter _api
 @inject StockForThePeopleSettings _stockForThePeopleSettings
@@ -14,12 +14,12 @@ Nou, dat is dus niet zomaar overduidelijk te zien.
 @if (volumes is not null && selectedTicker is not null)
 {
     <div class="d-inline-flex" style="border-style:dotted;border-width:thick;border-color:cyan;height:600px">
-        <LineChart Id=0 Type="@LineChart.ChartType.Line"
+        <XLineChart Id=0 Type="@XLineChart.ChartType.Line"
                     AssetName=@singleAssetWithMarketData.Asset.Name
                    Volumes="volumes"
                    Values="values"
                    Labels="dates">
-        </LineChart>
+        </XLineChart>
     </div>
 }
 
