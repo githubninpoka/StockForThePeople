@@ -22,6 +22,8 @@ Questions like:
 - "Hmm, last year food prices went down in september, maybe I should sell a bit of that in july?"
 - "Which stock did better over the last 3 months compared to the others in my portfolio?"
 - If there is a lot of trading on a certain stock, does that necessarily say something about its value?
+- If there is a lot of trading on a certain stock, does that say something about the daily difference between low and high?
+- 
 
 
 Done:
@@ -41,12 +43,12 @@ Done:
 - Historically - last 1000 days (manual process)
 
 - First graph page done
-- 
+- Make a generic linechart that can handle multiple or single incoming data arrays
+
 Next:
 Technically:
-- build first component library for more separation of concerns and reusability
+- Won't do now: build first component library for more separation of concerns and reusability
 - think about making separate chart.js components
-- think about making a generic linechart that can handle multiple or single incoming data arrays
 - work on making the api calls (internal and external) a bit more fault tolerant. (cancellation tokens, alert actions)
 - think about a good way to have the external update service just trigger on a (?) timer
 - Make 2 services (one for when blazor is running serverside and the other for when blazor is running webassembly) to make the blazor pages & components cleaner.
@@ -68,7 +70,7 @@ Learnt:
 - you can't call Java Interop in dispose
 - javascript is very much case sensitive (hard lesson)
 - webassembly does not use appsettings in the same way as other asp .net core applications (hard lesson)
-- 
+- when creating an anonymous object, it is possible to vary the type of a property (because javascript is not strongly typed and c# is)
 
 Good books:
 - Web Development with Blazor, Third Edition, Copyright © 2024 Packt Publishing
