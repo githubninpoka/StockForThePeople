@@ -50,7 +50,7 @@ public class InternalDataService : IInternalDataService
 
     public async Task<AssetWithMarketGetDto> GetMarketForAssetAsync(string ticker)
     {
-        int magicNumber = 30;
+        int magicNumber = 60;
         DateTime fromDateTime = DateTime.Now - TimeSpan.FromDays(magicNumber);
         DateOnly fromDate = DateOnly.FromDateTime(fromDateTime);
         AssetGetDto asset = await GetAssetByTickerAsync(ticker);

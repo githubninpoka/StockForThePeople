@@ -1,0 +1,45 @@
+﻿@inherits LayoutComponentBase
+@using StockForThePeople.WebBlazor.Client.Components
+@inject ILogger<StockForThePeopleLayout> _logger
+@inject IWebApiExecuter _api
+@inject IJSRuntime jsRuntime
+@inject StockForThePeopleSettings _stockForThePeopleSettings
+
+<div class="page">
+    <div class="container">
+        <StockForThePeopleNav></StockForThePeopleNav>
+        <main>
+            <article class="content px-4">
+                <CascadingValue Value="assetGetDtoList" Name="AssetList">
+                    @Body
+                </CascadingValue>
+
+            </article>
+        </main>
+    </div>
+</div>
+@* 
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div> *@
+
+
+@code {
+    private List<AssetGetDtoList> assetGetDtoList;
+
+    protected override async Task OnInitializedAsync()
+    {
+        string baseUrl = _stockForThePeopleSettings.BaseUrl;
+        _api.BaseUrl = baseUrl;
+        string uri = _stockForThePeopleSettings.AssetListUri;
+        assetGetDtoList = await _api.InvokeGetAsync<List<AssetGetDtoList>>(uri);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await jsRuntime.InvokeVoidAsync("userScroll");
+        await jsRuntime.InvokeVoidAsync("menuWatch");
+    }
+}
