@@ -5,21 +5,21 @@
 @inject StockForThePeopleSettings _stockForThePeopleSettings
 @inject ILogger<MonthlyHighLowPerAsset> _logger
 
-    <br />
-    <br />
-<h3>Volumes versus verschil HighLow per dag</h3>
-De gedachte is: er moet een herleidbaar verband zijn tussen het verschil in High en Low van een aandeel en de hoeveelheid verhandelde aandelen
-<div class="alert alert-danger" role="alert">Dit wordt high/low maar is het nu nog niet, verder is het nu een periode van 60 dagen</div>
+<div>
+    <h3>Volumes versus verschil HighLow per dag</h3>
+    De gedachte is: er moet een herleidbaar verband zijn tussen het verschil in High en Low van een aandeel en de hoeveelheid verhandelde aandelen
+    <div class="alert alert-danger" role="alert">Dit wordt high/low maar is het nu nog niet, verder is het nu een periode van 60 dagen</div>
 
-<AssetSelector ValueChanged="SelectedTickerHandler" />
+    <AssetSelector ValueChanged="SelectedTickerHandler" />
 
-@if (volumes is not null && selectedTicker is not null)
-{
-    <div class="d-inline-flex" style="height:600px;border-style:solid;border-width:thin;border-color:black">
-        <LineChart Id=0 LineChartConfiguration="lineChartConfiguration">
-        </LineChart>
-    </div>
-}
+    @if (volumes is not null && selectedTicker is not null)
+    {
+        <div class="d-inline-flex" style="height:600px;border-style:solid;border-width:thin;border-color:black">
+            <LineChart Id=0 LineChartConfiguration="lineChartConfiguration">
+            </LineChart>
+        </div>
+    }
+</div>
 
 @code {
     private LineChartConfiguration lineChartConfiguration;
@@ -79,7 +79,8 @@ De gedachte is: er moet een herleidbaar verband zijn tussen het verschil in High
                     {
                         LeftAxis = new ChartAxis()
                         {
-                            Title = new ChartAxisTitle(){ 
+                            Title = new ChartAxisTitle()
+                            {
                                 Text = "Dagvolume",
                                 Display = true
                             },
@@ -92,16 +93,18 @@ De gedachte is: er moet een herleidbaar verband zijn tussen het verschil in High
                         },
                         RightAxis = new ChartAxis()
                         {
-                            Title = new ChartAxisTitle(){
-                                Text="Waarde",
-                                Display=true
+                            Title = new ChartAxisTitle()
+                            {
+                                Text = "Waarde",
+                                Display = true
                             },
                             Display = true,
                             Position = "right",
                             BeginAtZero = false,
                             Min = values.Min() - 1,
                             Max = values.Max() + 1,
-                            Grid = new ChartAxisGrid(){
+                            Grid = new ChartAxisGrid()
+                            {
                                 Display = false
                             }
                         }

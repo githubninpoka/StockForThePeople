@@ -53,6 +53,7 @@ Technically:
 - think about a good way to have the external update service just trigger on a (?) timer
 - Make 2 services (one for when blazor is running serverside and the other for when blazor is running webassembly) to make the blazor pages & components cleaner.
 - see if I can do a simple unit test that gets data from an external mock api, puts it in memory database, and retrieves it from the api.
+- rework the layout away from standard MainLayout
 
 Next:
 Functionally:
