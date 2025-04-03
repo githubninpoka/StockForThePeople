@@ -54,10 +54,10 @@ public class InternalDataService : IInternalDataService
         DateTime fromDateTime = DateTime.Now - TimeSpan.FromDays(magicNumber);
         DateOnly fromDate = DateOnly.FromDateTime(fromDateTime);
         AssetGetDto asset = await GetAssetByTickerAsync(ticker);
-        List<MarketGetDto> market = await _stockForThePeopleSqliteContext.MarketData
+        List<MarketWithVolumeGetDto> market = await _stockForThePeopleSqliteContext.MarketData
             .Where(x => x.AssetId == asset.Id && x.Date >= fromDate)
             .OrderBy(z => z.Date)
-            .Select(y => new MarketGetDto()
+            .Select(y => new MarketWithVolumeGetDto()
             {
                 Date = y.Date,
                 Volume = y.Volume,
@@ -79,4 +79,32 @@ public class InternalDataService : IInternalDataService
 
         return new AssetWithMarketGetDto() { Asset = asset, MarketHistory = market };
     }
+
+    public async Task<SingleAssetWithMarketDataListGetDto> GetMarketForAssetAsync(string ticker, int numberOfDays, DateOnly lastDate)
+    {
+        DateTime fromDateTime = DateTime.Now - TimeSpan.FromDays(numberOfDays);
+        DateOnly fromDate = DateOnly.FromDateTime(fromDateTime);
+        AssetGetDto asset = await GetAssetByTickerAsync(ticker);
+        List<MarketGetDto> market = await _stockForThePeopleSqliteContext.MarketData
+            .Where(x => x.AssetId == asset.Id && x.Date >= fromDate && x.Date <= lastDate)
+            .OrderBy(z => z.Date)
+            .Select(y => new MarketGetDto()
+            {
+                Date = y.Date,
+                Volume = y.Volume,
+                Value = y.Value,
+                Open = y.Open,
+                Close = y.Close,
+                Low = y.Low,
+                High = y.High
+            })
+            .ToListAsync();
+
+        var averageVolume = market.Average(x => x.Volume);
+        var percent = averageVolume / 100;
+
+
+        return new SingleAssetWithMarketDataListGetDto() { Asset = asset, MarketHistory = market };
+    }
+
 }

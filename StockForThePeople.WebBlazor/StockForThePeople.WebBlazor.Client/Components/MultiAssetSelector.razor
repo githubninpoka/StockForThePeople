@@ -1,4 +1,4 @@
-﻿@inject ILogger<AssetSelector> _logger
+﻿@inject ILogger<MultiAssetSelector> _logger
 
 @if (AssetList is not null)
 {
@@ -9,14 +9,34 @@
     else
     {
         <div>
-            <InputSelect class="btn btn-secondary dropdown-toggle" @bind-Value="SelectedAssetTicker" @bind-Value:after="HandleInputSelectSelectionChange">
+            <InputSelect 
+            class="btn btn-secondary dropdown-toggle" @bind-Value="blaat"  multiple
+            >
                 @foreach (var option in AssetList)
                 {
                     <option value="@option.Ticker">@option.Name</option>
                 }
             </InputSelect>
         </div>
-        <br/>
+        <br />
+        <div>
+            <select class="form-select" multiple aria-label="multiple select example">
+                <option selected>Open this select menu</option>
+                <option value="1">One</option>
+                <option value="2">Two</option>
+                <option value="3">Three</option>
+            </select>
+        </div>
+        <br />
+        @*         <div>
+            <select class="form-select" aria-label="Default select example">
+                <option selected>Open this select menu</option>
+                <option value="1">One</option>
+                <option value="2">Two</option>
+                <option value="3">Three</option>
+            </select>
+        </div> *@
+        <br />
     }
 
 }
@@ -26,14 +46,14 @@ else
     <button type="button" @onclick="HandleButtonClick">Refresh</button>
 }
 
-
-
 @code {
     [CascadingParameter(Name = "AssetList")]
-    public List<AssetGetDtoList> AssetList { get; set; } 
+    public List<AssetGetDtoList> AssetList { get; set; }
 
     [Parameter]
     public string SelectedAssetTicker { get; set; }
+
+    public List<string> blaat = new();
 
     [Parameter]
     public EventCallback<string> ValueChanged { get; set; }

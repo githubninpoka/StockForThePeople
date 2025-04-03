@@ -2,7 +2,10 @@
 
 ![image](https://github.com/user-attachments/assets/c2b4f25f-5593-4fde-aac9-e69a975484a0)
 
-Bespreken met Rick:
+**Disclaimer: work in progress. the code is still messy. redundant DTO's and endpoints because I'm very much building and refactoring.**
+
+Onderzoeken:
+- !! How to design the endpoints of my API. I have multiple sets of information that need calculation (business rules) and I want to avoid repeated calls to the database while performing a single calculation each time. So do I do single endpoint with query parameters or multiple endpoints, which will mean an explosion of endpoints.
 - mijn 'service' doet de vertaalslag tussen DTO en domein modellen. zowel van buiten naar binnen als van binnen naar buiten. Doordat de service een referentie heeft naar die modellen, hebben de webapi en het blazorproject dat allebei ook. Is dat okay? dat je frontend toegang heeft tot je domein modellen?
 - hoe zou jij omgaan met een job die 1 x per dag moet draaien (het ophalen van de koersen)
 - wat zou een goeie unit test zijn om te maken
@@ -47,6 +50,7 @@ Done:
 
 Next:
 Technically:
+
 - Won't do now: build first component library for more separation of concerns and reusability
 - think about making separate chart.js components
 - work on making the api calls (internal and external) a bit more fault tolerant. (cancellation tokens, alert actions)
@@ -72,6 +76,8 @@ Learnt:
 - javascript is very much case sensitive (hard lesson)
 - webassembly does not use appsettings in the same way as other asp .net core applications (hard lesson)
 - when creating an anonymous object, it is possible to vary the type of a property (because javascript is not strongly typed and c# is)
+- bootstrap pulldowns, popovers and tooltips *require* the bootstrap javascript to be also loaded.
+- there is no pretty multi select component available out of the box in either Blazor or Bootstrap.
 
 Good books:
 - Web Development with Blazor, Third Edition, Copyright © 2024 Packt Publishing

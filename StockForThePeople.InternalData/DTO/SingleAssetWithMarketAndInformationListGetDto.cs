@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace StockForThePeople.InternalData.DTO;
 
-public class AssetWithMarketGetDto
+public class SingleAssetWithMarketAndInformationListGetDto
 {
     public AssetGetDto Asset { get; init; }
-    public List<MarketWithVolumeGetDto> MarketHistory { get; init; } = new();
+
+
 }
