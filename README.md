@@ -1,16 +1,9 @@
 # StockForThePeople
 
-![image](https://github.com/user-attachments/assets/c2b4f25f-5593-4fde-aac9-e69a975484a0)
+![image](https://github.com/user-attachments/assets/c8fd008c-c813-4f7e-aa77-1330fa85458e)
+
 
 **Disclaimer: work in progress. the code is still messy. redundant DTO's and endpoints because I'm very much building and refactoring.**
-
-Onderzoeken:
-- !! How to design the endpoints of my API. I have multiple sets of information that need calculation (business rules) and I want to avoid repeated calls to the database while performing a single calculation each time. So do I do single endpoint with query parameters or multiple endpoints, which will mean an explosion of endpoints.
-- mijn 'service' doet de vertaalslag tussen DTO en domein modellen. zowel van buiten naar binnen als van binnen naar buiten. Doordat de service een referentie heeft naar die modellen, hebben de webapi en het blazorproject dat allebei ook. Is dat okay? dat je frontend toegang heeft tot je domein modellen?
-- hoe zou jij omgaan met een job die 1 x per dag moet draaien (het ophalen van de koersen)
-- wat zou een goeie unit test zijn om te maken
-- nog iets over DTO's. In mijn solution heb ik in het blazor project een DTO folder met DTOs. Als ik wil werken met een Component Library, dan moet die Component Library kennis hebben van de DTOs. Maar ik kan geen circulaire project referentie opnemen natuurlijk. Is het normaal om, naast je domeinmodellen, ook je DTOs in een apart project te plaatsen? Ook als die 'alleen' bedoeld zijn voor, in mijn geval, de externe data naar binnen halen (WebApi extern), het response model te maken (WebApi intern) en data te tonen in Blazor (Blazor Componenten).
-- 
 
 The goal of this application is to allow casual investors to analyze the progress of their portfolio.
 Ever notice how you can't really track how well one asset is doing compared to another? That's on purpose.
@@ -83,6 +76,15 @@ Learnt:
 - there is no pretty multi select component available out of the box in either Blazor or Bootstrap.
 
 Good books:
-- Web Development with Blazor, Third Edition, Copyright © 2024 Packt Publishing
+- Web Development with Blazor, Third Edition, Copyright Â© 2024 Packt Publishing
 - - Reiterating over all the concepts that I already knew
 	- Explained how to setup a component library in blazor.
+
+ 
+Onderzoeken:
+- !! How to design the endpoints of my API. I have multiple sets of information that need calculation (business rules) and I want to avoid repeated calls to the database while performing a single calculation each time. So do I do single endpoint with query parameters or multiple endpoints, which will mean an explosion of endpoints. -> after consulting with some seniors common sense prevailed: I split the endpoints where it was logical and do not fuss anymore about some query parameters.
+- mijn 'service' doet de vertaalslag tussen DTO en domein modellen. zowel van buiten naar binnen als van binnen naar buiten. Doordat de service een referentie heeft naar die modellen, hebben de webapi en het blazorproject dat allebei ook. Is dat okay? dat je frontend toegang heeft tot je domein modellen? -> after consulting, this is an okay solution.
+- hoe zou jij omgaan met een job die 1 x per dag moet draaien (het ophalen van de koersen)
+- wat zou een goeie unit test zijn om te maken
+- nog iets over DTO's. In mijn solution heb ik in het blazor project een DTO folder met DTOs. Als ik wil werken met een Component Library, dan moet die Component Library kennis hebben van de DTOs. Maar ik kan geen circulaire project referentie opnemen natuurlijk. Is het normaal om, naast je domeinmodellen, ook je DTOs in een apart project te plaatsen? Ook als die 'alleen' bedoeld zijn voor, in mijn geval, de externe data naar binnen halen (WebApi extern), het response model te maken (WebApi intern) en data te tonen in Blazor (Blazor Componenten). -> after discussion: it is okay to have DTOs in both the blazor project and the component library. I'm still wondering about duplication of code though.
+- 
