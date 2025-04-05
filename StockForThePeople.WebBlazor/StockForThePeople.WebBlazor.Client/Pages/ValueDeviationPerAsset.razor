@@ -4,23 +4,24 @@
 @inject StockForThePeopleSettings _stockForThePeopleSettings
 @inject ILogger<MonthlyPerAsset> _logger
 
-<h3>Procentuele afwijking koers per dag</h3>
-Deze grafiek geeft weer hoe de koers fluctueert wanneer er meer of minder wordt verhandeld. <br />
-De gegevens zijn in procenten ten opzichte van het gemiddelde/mediaan en beantwoordt de vraag: <br />
-"Als er vijf procent meer wordt verhandeld dan gemiddeld over de geselecteerde periode, <br />
-wat doet dan de koers in procenten ten opzichte van de mediane koers voor die periode?"<br />
-
-<AssetSelector ValueChanged="SelectedTickerHandler" />
+<div class="row">
+    <div class="col-md-7 p-1">
+        <h3>Procentuele afwijking koers per dag</h3>
+        Deze grafiek geeft weer hoe de koers fluctueert wanneer er meer of minder wordt verhandeld. 
+        De gegevens zijn in procenten ten opzichte van het gemiddelde/mediaan en beantwoordt de vraag: 
+        "Als er vijf procent meer wordt verhandeld dan gemiddeld over de geselecteerde periode, 
+        wat doet dan de koers in procenten ten opzichte van de mediane koers voor die periode?"
+    </div>
+    <div class="col-md-5 p-1">
+        <AssetSelector ValueChanged="SelectedTickerHandler" />
+    </div>
+</div>
 
 @if (volumes is not null && selectedTicker is not null)
 {
-    <div class="d-inline-flex" style="border-style:dotted;border-width:thick;border-color:cyan;height:600px">
-        <XLineChart Id=0 Type="@XLineChart.ChartType.Line"
-        AssetName=@singleAssetWithMarketInfo.Asset.Name
-        Volumes="volumes"
-        Values="values"
-        Labels="dates">
-        </XLineChart>
+    <div class="d-inline-flex" style="height:600px;border-style:solid;border-width:thin;border-color:black">
+        <LineChart Id=0 LineChartConfiguration="lineChartConfiguration">
+        </LineChart>
     </div>
 }
 
@@ -63,17 +64,14 @@ wat doet dan de koers in procenten ten opzichte van de mediane koers voor die pe
             foreach (var item in singleAssetWithMarketInfo.Information)
             {
                 volumesList.Add(Math.Round(item.VolumeComparedToAverageInPercentage.Value, 1));
-                valuesList.Add(Math.Round(item.ValueComparedToMeanInPercentage.Value,1));
+                valuesList.Add(Math.Round(item.ValueComparedToMeanInPercentage.Value, 1));
                 datesList.Add(item.Date.ToString());
             }
             volumes = volumesList.ToArray();
             values = valuesList.ToArray();
             dates = datesList.ToArray();
             volumeBaseLine = new double[volumes.Length];
-            // for (int i = 0; i< volumeBaseLine.Length;i++){
-            //     volumeBaseLine[i] = 1;
-            // }
-            Array.Fill(volumeBaseLine, 1);
+            Array.Fill(volumeBaseLine, 100);
         }
         lineChartConfiguration = new LineChartConfiguration()
             {
@@ -139,7 +137,7 @@ wat doet dan de koers in procenten ten opzichte van de mediane koers voor die pe
                             BorderColor="green",
                             Stepped="",
                             YAxisId="rightaxis",
-                            Label="Waardes"
+                            Label="% afwijking t.o.v. mediane waarde"
                         }
 
                     },
