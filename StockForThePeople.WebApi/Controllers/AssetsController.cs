@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
 using StockForThePeople.InternalData;
+using System.Runtime.CompilerServices;
 
 namespace StockForThePeople.WebApi.Controllers;
 
@@ -10,9 +11,14 @@ namespace StockForThePeople.WebApi.Controllers;
 public class AssetsController : ControllerBase
 {
     private readonly IInternalDataService _internalDataService;
-    public AssetsController(IInternalDataService internalDataService)
+    private readonly ILogger<AssetsController> _logger;
+    public AssetsController(
+        IInternalDataService internalDataService, 
+        ILogger<AssetsController> logger
+        )
     {
         _internalDataService = internalDataService;
+        _logger = logger;
     }
 
     [OutputCache(PolicyName = "Expire300")]
@@ -35,5 +41,22 @@ public class AssetsController : ControllerBase
     public async Task<IActionResult> GetMarketByTickerAsync(string ticker)
     {
         return Ok(await _internalDataService.GetMarketForAssetAsync(ticker));
+    }
+
+    [OutputCache(PolicyName = "Expire300")]
+    [HttpGet("{ticker}/Information")]
+    public async Task<IActionResult> GetInformationByTickerAsync(
+        [FromRoute] string ticker, 
+        [FromQuery] bool ValueComparedToMedianInPercentage = false,
+        [FromQuery] bool VolumeComparedToAverageInPercentage = false
+        )
+    {
+        InformationOptions options = new()
+        {
+            ValueComparedToMedianInPercentage = ValueComparedToMedianInPercentage,
+            VolumeComparedToAverageInPercentage = VolumeComparedToAverageInPercentage
+        };
+        var x = await _internalDataService.GetMarketWithInformationForAssetAsync(ticker, options);
+        return Ok(x);
     }
 }

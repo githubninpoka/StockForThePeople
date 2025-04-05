@@ -33,20 +33,22 @@ Done:
 - Set up several projects to separate concerns from the get go.
 - Set up serilog
 - First version of domain models and external DTOs
-- ExternalData service receives and processes data
-- InternalData service feeds the WebApi
+- ExternalData service receives, processes and stores data
+- InternalData service feeds the WebApi (the WebApi is used by the Blazor frontend)
 - Set up first database from EF core
 - Use both postman and insomnia for testing
 - Use chart.js
 - setup a simple outputcache in the WebApi
-- Decided to NOT implement a separate Component Library for now.
+- Decided to NOT implement a separate Component Library for now
 
 - Store data:
 - Monthly (manual process)
 - Historically - last 1000 days (manual process)
 
+- Visually:
 - First graph page done
 - Make a generic linechart that can handle multiple or single incoming data arrays
+- rework the layout away from standard MainLayout
 
 Next:
 Technically:
@@ -57,10 +59,11 @@ Technically:
 - think about a good way to have the external update service just trigger on a (?) timer
 - Make 2 services (one for when blazor is running serverside and the other for when blazor is running webassembly) to make the blazor pages & components cleaner.
 - see if I can do a simple unit test that gets data from an external mock api, puts it in memory database, and retrieves it from the api.
-- rework the layout away from standard MainLayout
+- implement nicer expiring caching with etag etc. (see rick morty project for reference)
 
 Next:
 Functionally:
+- work on page: Does volume say something about volatility of value
 - work on another graph page: does the difference between high/low say something really about volatility of value
 - work on another graph page: multiselect assets and show if their volume and or value correlate
 - see if there are any other more precise external data sources available

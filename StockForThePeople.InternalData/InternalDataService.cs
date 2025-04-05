@@ -80,15 +80,28 @@ public class InternalDataService : IInternalDataService
         return new AssetWithMarketGetDto() { Asset = asset, MarketHistory = market };
     }
 
-    public async Task<SingleAssetWithMarketDataListGetDto> GetMarketForAssetAsync(string ticker, int numberOfDays, DateOnly lastDate)
+    public async Task<SingleAssetWithMarketAndInformationListGetDto> GetMarketWithInformationForAssetAsync(
+        string ticker,
+        InformationOptions informationOptions,
+        int numberOfDays = 30,
+        DateTime lastDateTime = default(DateTime)
+
+        )
     {
         DateTime fromDateTime = DateTime.Now - TimeSpan.FromDays(numberOfDays);
         DateOnly fromDate = DateOnly.FromDateTime(fromDateTime);
+
+        if (lastDateTime == default(DateTime))
+        {
+            lastDateTime = DateTime.Now;
+        }
+        DateOnly lastDate = DateOnly.FromDateTime(lastDateTime);
+
         AssetGetDto asset = await GetAssetByTickerAsync(ticker);
-        List<MarketGetDto> market = await _stockForThePeopleSqliteContext.MarketData
+        List<MarketWithInformationGetDto> marketWithInformation = await _stockForThePeopleSqliteContext.MarketData
             .Where(x => x.AssetId == asset.Id && x.Date >= fromDate && x.Date <= lastDate)
             .OrderBy(z => z.Date)
-            .Select(y => new MarketGetDto()
+            .Select(y => new MarketWithInformationGetDto()
             {
                 Date = y.Date,
                 Volume = y.Volume,
@@ -100,11 +113,52 @@ public class InternalDataService : IInternalDataService
             })
             .ToListAsync();
 
-        var averageVolume = market.Average(x => x.Volume);
-        var percent = averageVolume / 100;
+        if (informationOptions.VolumeComparedToAverageInPercentage)
+        {
+            double averageVolume = marketWithInformation.Average(x => x.Volume);
+            double onePercent = averageVolume / 100;
+            foreach (var item in marketWithInformation)
+            {
+                double delta = item.Volume - averageVolume;
+                double percentageDeviation = delta / onePercent;
+                item.VolumeComparedToAverageInPercentage = Math.Round( 100 + percentageDeviation, 2);
+            }
+        }
+        if (informationOptions.ValueComparedToMedianInPercentage)
+        {
+            decimal medianValue = GetMedian(marketWithInformation.Select(x => x.Value).ToArray());
+            double onePercent = (double)medianValue / 100;
+            foreach (var item in marketWithInformation)
+            {
+                double delta = (double)item.Value - (double)medianValue;
+                double percentageDeviation = delta / onePercent;
+                item.ValueComparedToMeanInPercentage = Math.Round( 100 + percentageDeviation, 2);
+            }
+        }
+        return new SingleAssetWithMarketAndInformationListGetDto() { 
+            Asset = asset, 
+            Information = marketWithInformation 
+        };
+    }
 
+    // if I ever have a successful application with plenty of other numerical types, I might switch to generics..
+    private static decimal GetMedian(decimal[] sourceArray)
+    {
+        // https://www.mytecbits.com/microsoft/dot-net/calculate-median-in-c-sharp
 
-        return new SingleAssetWithMarketDataListGetDto() { Asset = asset, MarketHistory = market };
+        if (sourceArray == null || sourceArray.Length == 0)
+        {
+            throw new ArgumentException("Cannot calculate median value for empty array");
+        }
+        Array.Sort(sourceArray);
+        int middle = sourceArray.Length / 2;
+        if (sourceArray.Length % 2 != 0)
+        {
+            return sourceArray[middle];
+        }
+        decimal value1 = sourceArray[middle];
+        decimal value2 = sourceArray[middle - 1];
+        return (value1 + value2) / 2;
     }
 
 }
