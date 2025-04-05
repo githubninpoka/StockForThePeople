@@ -1,0 +1,161 @@
+﻿@page "/valueDeviationPerAsset"
+@using System.Globalization
+@inject IWebApiExecuter _api
+@inject StockForThePeopleSettings _stockForThePeopleSettings
+@inject ILogger<MonthlyPerAsset> _logger
+
+<h3>Procentuele afwijking koers per dag</h3>
+Deze grafiek geeft weer hoe de koers fluctueert wanneer er meer of minder wordt verhandeld. <br />
+De gegevens zijn in procenten ten opzichte van het gemiddelde/mediaan en beantwoordt de vraag: <br />
+"Als er vijf procent meer wordt verhandeld dan gemiddeld over de geselecteerde periode, <br />
+wat doet dan de koers in procenten ten opzichte van de mediane koers voor die periode?"<br />
+
+<AssetSelector ValueChanged="SelectedTickerHandler" />
+
+@if (volumes is not null && selectedTicker is not null)
+{
+    <div class="d-inline-flex" style="border-style:dotted;border-width:thick;border-color:cyan;height:600px">
+        <XLineChart Id=0 Type="@XLineChart.ChartType.Line"
+        AssetName=@singleAssetWithMarketInfo.Asset.Name
+        Volumes="volumes"
+        Values="values"
+        Labels="dates">
+        </XLineChart>
+    </div>
+}
+
+@code {
+    private LineChartConfiguration lineChartConfiguration;
+
+    private AssetWithMarketInfoDisplayDto singleAssetWithMarketInfo;
+    private double[] volumes;
+    private double[] values;
+    private string[] dates;
+    private double[] volumeBaseLine;
+
+    [Parameter]
+    public string selectedTicker { get; set; }
+
+    private string basicUri;
+    private string fullUri;
+
+    private async Task SelectedTickerHandler(string selected)
+    {
+
+        selectedTicker = selected;
+        fullUri = basicUri + selected;
+        fullUri = "Assets/" +
+        selected +
+        "/Information" +
+        "?ValueComparedToMedianInPercentage=true&" +
+        "VolumeComparedToAverageInPercentage=true&" +
+        "NumberOfDays=30";
+        List<double> volumesList = new();
+        List<string> datesList = new();
+        List<double> valuesList = new();
+
+        if (fullUri is not null)
+        {
+            _logger.LogInformation("calling elvis");
+            _api.BaseUrl = _stockForThePeopleSettings.BaseUrl;
+
+            singleAssetWithMarketInfo = await _api.InvokeGetAsync<AssetWithMarketInfoDisplayDto>(fullUri);
+            foreach (var item in singleAssetWithMarketInfo.Information)
+            {
+                volumesList.Add(Math.Round(item.VolumeComparedToAverageInPercentage.Value, 1));
+                valuesList.Add(Math.Round(item.ValueComparedToMeanInPercentage.Value,1));
+                datesList.Add(item.Date.ToString());
+            }
+            volumes = volumesList.ToArray();
+            values = valuesList.ToArray();
+            dates = datesList.ToArray();
+            volumeBaseLine = new double[volumes.Length];
+            // for (int i = 0; i< volumeBaseLine.Length;i++){
+            //     volumeBaseLine[i] = 1;
+            // }
+            Array.Fill(volumeBaseLine, 1);
+        }
+        lineChartConfiguration = new LineChartConfiguration()
+            {
+                LineChartOptions = new LineChartOptions()
+                {
+                    ChartTitle = $"Dit gaat over {singleAssetWithMarketInfo.Asset.Name}",
+                    Responsive = true,
+                    Scales = new ChartAxes()
+                    {
+                        LeftAxis = new ChartAxis()
+                        {
+                            Title = new ChartAxisTitle()
+                            {
+                                Text = "Dagvolume",
+                                Display = true
+                            },
+                            Display = true,
+                            BeginAtZero = true,
+                            Grid = new ChartAxisGrid()
+                            {
+                                Display = true
+                            }
+                        },
+                        RightAxis = new ChartAxis()
+                        {
+                            Title = new ChartAxisTitle()
+                            {
+                                Text = "Waarde",
+                                Display = true
+                            },
+                            Display = true,
+                            Position = "right",
+                            BeginAtZero = false,
+                            Min = values.Min() - 1,
+                            Max = values.Max() + 1,
+                            Grid = new ChartAxisGrid()
+                            {
+                                Display = false
+                            }
+                        }
+                    }
+                },
+                Data = new ChartDataSets()
+                {
+                    DataSets = new ChartDataSet[] {
+                        new ChartDataSet(){
+                            Data = volumeBaseLine,
+                            BorderColor="rgba(255,0,0,1)",
+                            YAxisId="leftaxis",
+                            Label="Gemiddeld maandvolume"
+                        },
+                        new ChartDataSet(){
+                            Data=volumes,
+                            BorderColor="grey",
+                            Stepped="middle",
+                            YAxisId="leftaxis",
+                            Label="Volumes",
+                            Fill = true,
+                            PointStyle = "dash"
+                        },
+                        new ChartDataSet(){
+                            Data=values,
+                            BorderColor="green",
+                            Stepped="",
+                            YAxisId="rightaxis",
+                            Label="Waardes"
+                        }
+
+                    },
+                    Labels = new LineChartLabels()
+                    {
+                        Labels = dates
+                    }
+
+                }
+
+            };
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _api.BaseUrl = _stockForThePeopleSettings.BaseUrl;
+        basicUri = _stockForThePeopleSettings.MarketByTickerUri;
+    }
+}

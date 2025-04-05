@@ -88,14 +88,15 @@ public class InternalDataService : IInternalDataService
 
         )
     {
-        DateTime fromDateTime = DateTime.Now - TimeSpan.FromDays(numberOfDays);
-        DateOnly fromDate = DateOnly.FromDateTime(fromDateTime);
 
         if (lastDateTime == default(DateTime))
         {
             lastDateTime = DateTime.Now;
         }
         DateOnly lastDate = DateOnly.FromDateTime(lastDateTime);
+
+        DateTime fromDateTime = lastDateTime - TimeSpan.FromDays(numberOfDays);
+        DateOnly fromDate = DateOnly.FromDateTime(fromDateTime);
 
         AssetGetDto asset = await GetAssetByTickerAsync(ticker);
         List<MarketWithInformationGetDto> marketWithInformation = await _stockForThePeopleSqliteContext.MarketData

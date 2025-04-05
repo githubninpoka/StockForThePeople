@@ -25,6 +25,9 @@
     <Content Update="Pages\MonthlyHighLowPerAsset.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
+    <Content Update="Pages\ValueDeviationPerAsset.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
     <Content Update="wwwroot\StockForThePeopleSettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
