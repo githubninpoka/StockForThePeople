@@ -1,6 +1,6 @@
 ﻿@page "/MonthlyHighLowPerAsset"
 @page "/"
-@using System.Globalization
+
 @inject IWebApiExecuter _api
 @inject StockForThePeopleSettings _stockForThePeopleSettings
 @inject ILogger<MonthlyHighLowPerAsset> _logger
@@ -53,20 +53,14 @@
             singleAssetWithMarketData = await _api.InvokeGetAsync<AssetWithMarketGetDto>(fullUri);
             foreach (var item in singleAssetWithMarketData.MarketHistory)
             {
-                //volumesList.Add(Math.Round(item.VolumeComparedToAverage / 100, 1).ToString(CultureInfo.CreateSpecificCulture("en-US")));
                 volumesList.Add(Math.Round(item.VolumeComparedToAverage / 100, 1));
-                //valuesList.Add(item.Value.ToString(CultureInfo.CreateSpecificCulture("en-US")));
                 valuesList.Add((double)item.Value);
-                //valuesList.Add((double)item.High - (double)item.Low);
                 datesList.Add(item.Date.ToString());
             }
             volumes = volumesList.ToArray();
             values = valuesList.ToArray();
             dates = datesList.ToArray();
             volumeBaseLine = new double[volumes.Length];
-            // for (int i = 0; i< volumeBaseLine.Length;i++){
-            //     volumeBaseLine[i] = 1;
-            // }
             Array.Fill(volumeBaseLine, 1);
         }
         lineChartConfiguration = new LineChartConfiguration()

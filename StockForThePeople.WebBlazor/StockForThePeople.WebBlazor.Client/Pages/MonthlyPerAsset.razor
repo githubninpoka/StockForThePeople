@@ -1,6 +1,5 @@
 ﻿@page "/MonthlyPerAsset"
 
-@using System.Globalization
 @inject IWebApiExecuter _api
 @inject StockForThePeopleSettings _stockForThePeopleSettings
 @inject ILogger<MonthlyPerAsset> _logger
@@ -52,9 +51,7 @@ Nou, dat is dus niet zomaar overduidelijk te zien.
             singleAssetWithMarketData = await _api.InvokeGetAsync<AssetWithMarketGetDto>(fullUri);
             foreach (var item in singleAssetWithMarketData.MarketHistory)
             {
-                //volumesList.Add(Math.Round(item.VolumeComparedToAverage / 100, 1).ToString(CultureInfo.CreateSpecificCulture("en-US")));
                 volumesList.Add(Math.Round(item.VolumeComparedToAverage / 100, 1));
-                //valuesList.Add(item.Value.ToString(CultureInfo.CreateSpecificCulture("en-US")));
                 valuesList.Add((double)item.Value);
                 datesList.Add(item.Date.ToString());
             }

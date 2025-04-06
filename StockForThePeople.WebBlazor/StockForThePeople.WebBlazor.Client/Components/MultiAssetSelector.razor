@@ -10,7 +10,9 @@
     {
         <div>
             <InputSelect 
-            class="btn btn-secondary dropdown-toggle" @bind-Value="blaat"  multiple
+            class="btn btn-secondary dropdown-toggle" 
+            @bind-Value="SelectedAssetTicker"
+            @bind-Value:after="HandleInputSelectSelectionChange"
             >
                 @foreach (var option in AssetList)
                 {
