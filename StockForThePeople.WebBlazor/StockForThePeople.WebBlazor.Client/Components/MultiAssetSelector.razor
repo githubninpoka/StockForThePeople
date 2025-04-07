@@ -4,69 +4,64 @@
 {
     @if (AssetList.Count == 0)
     {
-        <div class="text-warning">wtf</div>
+        <div class="text-warning">No available assets to select from.</div>
     }
     else
     {
-        <div>
-            <InputSelect 
-            class="btn btn-secondary dropdown-toggle" 
-            @bind-Value="SelectedAssetTicker"
-            @bind-Value:after="HandleInputSelectSelectionChange"
-            >
-                @foreach (var option in AssetList)
-                {
-                    <option value="@option.Ticker">@option.Name</option>
-                }
-            </InputSelect>
+        <div class="mb-1">
+            Apparently Blazor and Bootstrap do not have a normal looking multiselect widget out of the box.
+            So I'll have to work with this for now.
         </div>
-        <br />
-        <div>
-            <select class="form-select" multiple aria-label="multiple select example">
-                <option selected>Open this select menu</option>
-                <option value="1">One</option>
-                <option value="2">Two</option>
-                <option value="3">Three</option>
-            </select>
-        </div>
-        <br />
-        @*         <div>
-            <select class="form-select" aria-label="Default select example">
-                <option selected>Open this select menu</option>
-                <option value="1">One</option>
-                <option value="2">Two</option>
-                <option value="3">Three</option>
-            </select>
-        </div> *@
-        <br />
+        <EditForm EditContext="editContext" 
+        OnValidSubmit="HandleInputSelectionChange"
+        FormName="AssetSelectorForm"
+        multiple
+        >
+            <div>
+                <label>
+                    <InputSelect @bind-Value="Model">
+                        @foreach(var item in AssetList){
+                            <option value="@item.Ticker">@item.Name</option>
+                        }
+                    </InputSelect>
+                </label>
+            </div>
+            <div>
+                <button type="submit">Submit</button>
+            </div>
+        </EditForm>
+
+        @foreach(var item in Model){
+            <p>@item</p>
+        }
     }
 
 }
 else
 {
-    <div class="text-warning">There are no available assets to select from. (check why the values became unavailable after switch from server to webasembly.)</div>
-    <button type="button" @onclick="HandleButtonClick">Refresh</button>
+    <div class="text-warning">There are no available assets to select from. </div>
 }
 
 @code {
+    [Parameter]
+    public EventCallback<string[]> ValueChanged { get; set; }
+
     [CascadingParameter(Name = "AssetList")]
     public List<AssetGetDtoList> AssetList { get; set; }
 
-    [Parameter]
-    public string SelectedAssetTicker { get; set; }
+    private EditContext? editContext;
 
-    public List<string> blaat = new();
+    [SupplyParameterFromForm]
+    private string[] Model { get; set; } = [];
 
-    [Parameter]
-    public EventCallback<string> ValueChanged { get; set; }
 
-    private async Task HandleInputSelectSelectionChange()
+    protected override void OnInitialized()
     {
-        _logger.LogInformation("Invoking a callback");
-        await ValueChanged.InvokeAsync(SelectedAssetTicker);
+        editContext = new(Model);
     }
-    private void HandleButtonClick(MouseEventArgs e)
+
+    private void HandleInputSelectionChange()
     {
-        _logger.LogInformation("Items: {var}", AssetList.Count);
+        ValueChanged.InvokeAsync(Model);
     }
 }

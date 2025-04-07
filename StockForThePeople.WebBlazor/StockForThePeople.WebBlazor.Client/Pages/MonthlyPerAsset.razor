@@ -4,20 +4,26 @@
 @inject StockForThePeopleSettings _stockForThePeopleSettings
 @inject ILogger<MonthlyPerAsset> _logger
 
-<h3>Volumes versus Koers per dag</h3>
-De gedachte is: er moet een herleidbaar verband zijn tussen de koersontwikkeling van een aandeel en de hoeveelheid verhandelde aandelen.
-Nou, dat is dus niet zomaar overduidelijk te zien.
-
-<MultiAssetSelector ValueChanged="SelectedTickerHandler" />
+<div class="row p-1">
+    <div class="col-md-7">
+        <h3>Volumes versus Koers per dag</h3>
+        De gedachte is: er moet een herleidbaar verband zijn tussen de koersontwikkeling van een aandeel en de hoeveelheid verhandelde aandelen.
+        Nou, dat is dus niet zomaar overduidelijk te zien.
+    </div>
+    <div class="col-md-5">
+        <AssetSelector ValueChanged="SelectedTickerHandler" />
+        <MultiAssetSelector />
+    </div>
+</div>
 
 @if (volumes is not null && selectedTicker is not null)
 {
     <div class="d-inline-flex" style="border-style:dotted;border-width:thick;border-color:cyan;height:600px">
         <XLineChart Id=0 Type="@XLineChart.ChartType.Line"
                     AssetName=@singleAssetWithMarketData.Asset.Name
-                   Volumes="volumes"
-                   Values="values"
-                   Labels="dates">
+                    Volumes="volumes"
+                    Values="values"
+                    Labels="dates">
         </XLineChart>
     </div>
 }
@@ -47,7 +53,7 @@ Nou, dat is dus niet zomaar overduidelijk te zien.
         {
             _logger.LogInformation("calling elvis");
             _api.BaseUrl = _stockForThePeopleSettings.BaseUrl;
-            
+
             singleAssetWithMarketData = await _api.InvokeGetAsync<AssetWithMarketGetDto>(fullUri);
             foreach (var item in singleAssetWithMarketData.MarketHistory)
             {

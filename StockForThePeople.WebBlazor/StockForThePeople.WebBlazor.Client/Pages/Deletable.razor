@@ -1,0 +1,12 @@
+﻿@page "/delete"
+@inject ILogger<Deletable> _logger
+
+<h3>Deletable</h3>
+
+<MultiAssetSelector ValueChanged="CallMe" />
+
+@code {
+    private void CallMe(string[] input){
+        _logger.LogInformation("From the callback in parent.. {var} ", string.Join("=", input));
+    }
+}
