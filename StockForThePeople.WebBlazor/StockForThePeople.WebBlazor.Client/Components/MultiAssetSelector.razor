@@ -9,31 +9,36 @@
     else
     {
         <div class="mb-1">
-            Apparently Blazor and Bootstrap do not have a normal looking multiselect widget out of the box.
-            So I'll have to work with this for now.
+            Apparently Blazor and Bootstrap both do not have a normal looking multiselect widget out of the box.
+            So I'll have to work with this for now. Hold Ctrl down to select multiple assets.
         </div>
-        <EditForm EditContext="editContext" 
-        OnValidSubmit="HandleInputSelectionChange"
-        FormName="AssetSelectorForm"
-        multiple
-        >
+        <EditForm EditContext="editContext"
+                  OnValidSubmit="HandleInputSelectionChange"
+                  FormName="AssetSelectorForm"
+                  multiple>
             <div>
                 <label>
-                    <InputSelect @bind-Value="Model">
-                        @foreach(var item in AssetList){
+                    <InputSelect @bind-Value="SelectedAssets">
+                        @foreach (var item in AssetList)
+                        {
                             <option value="@item.Ticker">@item.Name</option>
                         }
                     </InputSelect>
                 </label>
             </div>
             <div>
-                <button type="submit">Submit</button>
+                <button type="submit">Use this selection</button>
             </div>
         </EditForm>
 
-        @foreach(var item in Model){
-            <p>@item</p>
+        <p>this is still inside the Multiselect Component</p>
+        <ul>
+        @foreach (var item in SelectedAssets)
+        {
+            <li>@item</li>
         }
+        </ul>
+        <p>this is still inside the Multiselect Component</p>
     }
 
 }
@@ -52,16 +57,19 @@ else
     private EditContext? editContext;
 
     [SupplyParameterFromForm]
-    private string[] Model { get; set; } = [];
+    private string[] SelectedAssets { get; set; } = [];
 
 
     protected override void OnInitialized()
     {
-        editContext = new(Model);
+        editContext = new(SelectedAssets);
     }
 
     private void HandleInputSelectionChange()
     {
-        ValueChanged.InvokeAsync(Model);
+        if (SelectedAssets.Length > 1)
+        {
+            ValueChanged.InvokeAsync(SelectedAssets);
+        }
     }
 }

@@ -18,7 +18,8 @@ namespace StockForThePeople.WebBlazor
             {
                 BaseUrl = builder.Configuration.GetValue<string>("StockForThePeopleApi:BaseUrl"),
                 AssetListUri = builder.Configuration.GetValue<string>("StockForThePeopleApi:AssetListUri"),
-                MarketByTickerUri = builder.Configuration.GetValue<string>("StockForThePeopleApi:MarketByTickerUri")
+                MarketByTickerUri = builder.Configuration.GetValue<string>("StockForThePeopleApi:MarketByTickerUri"),
+                MarketInfoByTickerUri = builder.Configuration.GetValue<string>("StockForThePeopleApi:MarketInfoByTickerUri")
             };
             builder.Services.AddSingleton(stockForThePeopleSettings);
 

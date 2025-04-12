@@ -1,5 +1,6 @@
 {
-    "BaseUrl": "https://localhost:7008/api/",
-    "AssetListUri": "Assets",
-    "MarketByTickerUri": "Assets/market/"
-  }
+  "BaseUrl": "https://localhost:7008/api/",
+  "AssetListUri": "Assets",
+  "MarketByTickerUri": "Assets/market/",
+  "MarketInfoByTickerUri": "/Information"
+}

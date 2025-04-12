@@ -14,12 +14,12 @@ Of course this comes with a downside. There are no minute to minute updates.
 But if you are like me, you don't need that. What you need is a daily insight or even a weekly insight.
 
 Questions like: 
-- "Hey, the financial sector is up in the last month, but energy transition is down. Is that a common pattern?"
-- "Hmm, last year food prices went down in september, maybe I should sell a bit of that in july?"
-- "Which stock did better over the last 3 months compared to the others in my portfolio?"
+- Hey, the financial sector is up in the last month, but energy transition is down. Is that a common pattern?
+- Hmm, last year food prices went down in september, maybe I should sell a bit of that in july?
+- Which stock did better over the last 3 months compared to the others in my portfolio?
 - If there is a lot of trading on a certain stock, does that necessarily say something about its value?
 - If there is a lot of trading on a certain stock, does that say something about the daily difference between low and high?
-- 
+- Can I find assets that regularly fluctuate in a negatively correlated way? (if one asset drops, does the other normally rise?)
 
 
 Done:
@@ -33,6 +33,7 @@ Done:
 - Use chart.js
 - setup a simple outputcache in the WebApi
 - Decided to NOT implement a separate Component Library for now
+- in the multi asset functionality, implement Task.Whenall for calling multiple endpoints
 
 - Store data:
 - Monthly (manual process)
@@ -42,23 +43,31 @@ Done:
 - First graph page done
 - Make a generic linechart that can handle multiple or single incoming data arrays
 - rework the layout away from standard MainLayout
+- 4 working Graph pages
+- - Volume compared to value for a single asset
+- - Volume compared to high low fluctuation for a single asset
+- - Relative volume compared to relative value for a single asset
+- - Relative value of multiple assets over time
 
 Next:
 Technically:
 
 - Won't do now: build first component library for more separation of concerns and reusability
-- think about making separate chart.js components
-- work on making the api calls (internal and external) a bit more fault tolerant. (cancellation tokens, alert actions)
+- think about making separate chart.js components (more than just a single Linechart component)
+- work on making the api calls (internal and external) a bit more fault tolerant. (cancellation tokens, alert actions) -- not necessary at this stage though
 - think about a good way to have the external update service just trigger on a (?) timer
 - Make 2 services (one for when blazor is running serverside and the other for when blazor is running webassembly) to make the blazor pages & components cleaner.
 - see if I can do a simple unit test that gets data from an external mock api, puts it in memory database, and retrieves it from the api.
 - implement nicer expiring caching with etag etc. (see rick morty project for reference)
+- fix having to press the update button twice on relative multival page before graph updates (probably a lifecycle issue i'm overlooking for now)
+- fix the way the StockForThePeopleSettings are now loaded in the server side project, because I have to adjust now in 2 places instead of 1 (program.cs and usersecrets)
+- do thorough testruns in both webassembly and servermode (especially with autorendermode) as right now everything is only running servermode, but forcing webassembly looks good too!
 
 Next:
 Functionally:
-- work on page: Does volume say something about volatility of value
-- work on another graph page: does the difference between high/low say something really about volatility of value
-- work on another graph page: multiselect assets and show if their volume and or value correlate
+- ~~work on page: Does volume say something about volatility of value~~
+- ~~work on another graph page: does the difference between high/low say something really about volatility of value~~
+- ~~work on another graph page: multiselect assets and show if their~~ volume ~~and or value~~ correlate
 - see if there are any other more precise external data sources available
 
 Patterns & design:

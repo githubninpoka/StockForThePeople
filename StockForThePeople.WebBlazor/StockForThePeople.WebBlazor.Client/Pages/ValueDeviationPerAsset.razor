@@ -57,8 +57,11 @@
 
         if (fullUri is not null)
         {
-            _logger.LogInformation("calling elvis");
-            _api.BaseUrl = _stockForThePeopleSettings.BaseUrl;
+            _logger.LogInformation("{var1} - {var2} - Asset: {var3}",
+            nameof(ValueDeviationPerAsset),
+            nameof(SelectedTickerHandler),
+            selected
+                );
 
             singleAssetWithMarketInfo = await _api.InvokeGetAsync<AssetWithMarketInfoDisplayDto>(fullUri);
             foreach (var item in singleAssetWithMarketInfo.Information)
@@ -145,9 +148,7 @@
                     {
                         Labels = dates
                     }
-
                 }
-
             };
     }
 

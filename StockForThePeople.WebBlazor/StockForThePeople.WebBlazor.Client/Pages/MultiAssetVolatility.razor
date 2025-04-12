@@ -1,0 +1,120 @@
+﻿@page "/mav"
+
+@inject IWebApiExecuter _api
+@inject StockForThePeopleSettings _stockForThePeopleSettings
+@inject ILogger<MultiAssetVolatility> _logger
+
+
+<h3>MultiAssetVolatility</h3>
+<MultiAssetSelector ValueChanged="HandleMultiSelectChange"></MultiAssetSelector>
+
+@if (assetsToCompare is not null)
+{
+    @foreach (string asset in assetsToCompare)
+    {
+        <p>@asset</p>
+    }
+}
+@if(lineChartConfiguration is not null)
+{
+    <div class="d-inline-flex" style="height:600px ;border-style:solid;border-width:thin;border-color:black">
+        <LineChart Id=0 LineChartConfiguration="lineChartConfiguration">
+
+        </LineChart>
+    </div>
+    <p> ffs</p>
+}
+
+@code {
+    private string[] assetsToCompare;
+    List<AssetWithMarketInfoDisplayDto> chartData = new();
+    private LineChartConfiguration lineChartConfiguration;
+    private string endpointPathFirstSegment;
+    private string endpointPathSecondSegment;
+
+    private async void HandleMultiSelectChange(string[] selectedAssets)
+    {
+        _logger.LogInformation("{var1} - {var2} - Assets: {var3}",
+            nameof(MultiAssetVolatility),
+            nameof(HandleMultiSelectChange),
+            string.Join("-", selectedAssets));
+
+        assetsToCompare = selectedAssets;
+        chartData.Clear();
+
+        // should add error handling in due time with cancellation and error checking
+        List<Task<AssetWithMarketInfoDisplayDto>> tasksForInfoOnSelectedAssets = new();
+        foreach(var asset in assetsToCompare)
+        {
+            string uri = endpointPathFirstSegment + "/" +
+                asset +
+                endpointPathSecondSegment +
+                "?ValueComparedToMedianInPercentage=true";
+
+            tasksForInfoOnSelectedAssets.Add(_api.InvokeGetAsync<AssetWithMarketInfoDisplayDto>(uri));
+        }
+        await Task.WhenAll(tasksForInfoOnSelectedAssets);
+
+        foreach (var item in tasksForInfoOnSelectedAssets)
+        {
+            chartData.Add(item.Result);
+        }
+
+        LineChartLabels lineChartLabels = new LineChartLabels()
+        {
+            Labels=tasksForInfoOnSelectedAssets[0].Result.Information.Select(x => x.Date.ToString()).ToArray()
+        };
+
+        List<ChartDataSet> dataSets = new();
+        foreach (var item in chartData)
+        {
+            dataSets.Add(new ChartDataSet()
+            {
+                Data = item.Information.Select(x => x.ValueComparedToMeanInPercentage.Value).ToArray(),
+                Label = item.Asset.Name,
+                Stepped="",
+                YAxisId="leftaxis",
+                BorderColor="green"
+            });
+        }
+
+        // setup the parameters for chart.js
+        lineChartConfiguration = new()
+            {
+                LineChartOptions = new LineChartOptions()
+                {
+                    ChartTitle = $"Compare {string.Join(" & ",assetsToCompare)}",
+                    Responsive = true,
+                    Scales = new ChartAxes()
+                    {
+                        LeftAxis=new ChartAxis()
+                        {
+                            Title = new ChartAxisTitle()
+                            {
+                                Text="Percentual value fluctuation",
+                                Display=true
+                            },
+                            Display=true,
+                            BeginAtZero=true,
+                            Grid=new ChartAxisGrid()
+                            {
+                                Display=true
+                            }
+                        }
+                    }
+                },
+                Data = new ChartDataSets()
+                {
+                    DataSets = dataSets.ToArray(),
+                    Labels = lineChartLabels
+                }
+            };
+    }
+
+    protected override void OnInitialized()
+    {
+        _api.BaseUrl = _stockForThePeopleSettings.BaseUrl;
+        endpointPathFirstSegment = _stockForThePeopleSettings.AssetListUri;
+        endpointPathSecondSegment = _stockForThePeopleSettings.MarketInfoByTickerUri;
+    }
+}
