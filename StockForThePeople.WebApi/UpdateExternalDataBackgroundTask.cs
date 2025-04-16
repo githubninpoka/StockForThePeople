@@ -34,9 +34,14 @@ public class UpdateExternalDataBackgroundTask : IHostedService, IDisposable
                 nameof(UpdateExternalData), 
                 DateTime.Now.ToLongTimeString());
 
+            // https://www.youtube.com/watch?v=FSjCGdkbiCA
+            // brief solution to when you want to use scoped services inside a singleton service
+
             using IServiceScope scope = _serviceScopeFactory.CreateScope();
             IExternalDataService externalDataService = scope.ServiceProvider.GetRequiredService<IExternalDataService>();
             await externalDataService.UpdateDataAsync();
+
+            // once the application is hosted somewhere, if ever, this needs to change to 24 hours.
             _timer.Period = Timeout.InfiniteTimeSpan;
         }
     }
