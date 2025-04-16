@@ -60,6 +60,8 @@ public class Program
             options.UseSqlite(builder.Configuration.GetConnectionString("StockForThePeopleDb"));
         });
 
+        builder.Services.AddHostedService<UpdateExternalDataBackgroundTask>();
+
 
         builder.Services.AddControllers();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

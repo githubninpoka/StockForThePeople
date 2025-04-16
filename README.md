@@ -34,6 +34,7 @@ Done:
 - setup a simple outputcache in the WebApi
 - Decided to NOT implement a separate Component Library for now
 - in the multi asset functionality, implement Task.Whenall for calling multiple endpoints
+- have a background service update external data through service, at startup (but can be changed to daily easily in the background task)
 
 - Store data:
 - Monthly (manual process)
@@ -56,12 +57,16 @@ Technically:
 - think about making separate chart.js components (more than just a single Linechart component)
 - work on making the api calls (internal and external) a bit more fault tolerant. (cancellation tokens, alert actions) -- not necessary at this stage though
 - think about a good way to have the external update service just trigger on a (?) timer
+- - ~~background service explained: https://www.youtube.com/watch?v=ip3Z4ZcAgA8~~
+- - ~~periodic timer instead of timer: https://www.youtube.com/watch?v=N7vhJ7O56iM~~
+- - ~~use scoped services inside a hostedservice: https://www.youtube.com/watch?v=FSjCGdkbiCA~~
 - Make 2 services (one for when blazor is running serverside and the other for when blazor is running webassembly) to make the blazor pages & components cleaner.
 - see if I can do a simple unit test that gets data from an external mock api, puts it in memory database, and retrieves it from the api.
 - implement nicer expiring caching with etag etc. (see rick morty project for reference)
 - fix having to press the update button twice on relative multival page before graph updates (probably a lifecycle issue i'm overlooking for now)
 - fix the way the StockForThePeopleSettings are now loaded in the server side project, because I have to adjust now in 2 places instead of 1 (program.cs and usersecrets)
 - do thorough testruns in both webassembly and servermode (especially with autorendermode) as right now everything is only running servermode, but forcing webassembly looks good too!
+- the program.cs and consuming classes now reference the dbcontext as a specific sqlite context. I want to change that to something 'interface' for if I want to move to another db later on.
 
 Next:
 Functionally:
@@ -69,6 +74,7 @@ Functionally:
 - ~~work on another graph page: does the difference between high/low say something really about volatility of value~~
 - ~~work on another graph page: multiselect assets and show if their~~ volume ~~and or value~~ correlate
 - see if there are any other more precise external data sources available
+- have the Y-axis for multi asset start and end a bit beyond the most extreme value
 
 Patterns & design:
 - options pattern
