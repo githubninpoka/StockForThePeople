@@ -35,6 +35,7 @@ Done:
 - Decided to NOT implement a separate Component Library for now
 - in the multi asset functionality, implement Task.Whenall for calling multiple endpoints
 - have a background service update external data through service, at startup (but can be changed to daily easily in the background task)
+- Refactoring: Moved away from concrete DbContext implementation towards an interface
 
 - Store data:
 - Monthly (manual process)
@@ -56,7 +57,7 @@ Technically:
 - Won't do now: build first component library for more separation of concerns and reusability
 - think about making separate chart.js components (more than just a single Linechart component)
 - work on making the api calls (internal and external) a bit more fault tolerant. (cancellation tokens, alert actions) -- not necessary at this stage though
-- think about a good way to have the external update service just trigger on a (?) timer
+- ~~think about a good way to have the external update service just trigger on a (?) timer~~
 - - ~~background service explained: https://www.youtube.com/watch?v=ip3Z4ZcAgA8~~
 - - ~~periodic timer instead of timer: https://www.youtube.com/watch?v=N7vhJ7O56iM~~
 - - ~~use scoped services inside a hostedservice: https://www.youtube.com/watch?v=FSjCGdkbiCA~~
@@ -66,7 +67,7 @@ Technically:
 - fix having to press the update button twice on relative multival page before graph updates (probably a lifecycle issue i'm overlooking for now)
 - fix the way the StockForThePeopleSettings are now loaded in the server side project, because I have to adjust now in 2 places instead of 1 (program.cs and usersecrets)
 - do thorough testruns in both webassembly and servermode (especially with autorendermode) as right now everything is only running servermode, but forcing webassembly looks good too!
-- the program.cs and consuming classes now reference the dbcontext as a specific sqlite context. I want to change that to something 'interface' for if I want to move to another db later on.
+- ~~the program.cs and consuming classes now reference the dbcontext as a specific sqlite context. I want to change that to something 'interface' for if I want to move to another db later on.~~
 
 Next:
 Functionally:

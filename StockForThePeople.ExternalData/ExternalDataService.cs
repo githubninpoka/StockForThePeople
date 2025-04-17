@@ -19,13 +19,13 @@ public class ExternalDataService : IExternalDataService
     private ILogger<ExternalDataService> _logger;
     private IWebApiExecuter _webApiExecuter;
     private ExternalDataConfigurationOptions _externalDataConfigurationOptions;
-    private StockForThePeopleSqliteContext _dbContext;
+    private IStockForThePeopleContext _dbContext;
 
     public ExternalDataService(
         ILogger<ExternalDataService> logger,
         IWebApiExecuter webApiExecuter,
         IOptions<ExternalDataConfigurationOptions> options,
-        StockForThePeopleSqliteContext dbContext
+        IStockForThePeopleContext dbContext
         )
     {
         _logger = logger;
@@ -37,14 +37,15 @@ public class ExternalDataService : IExternalDataService
 
     }
 
-    public async Task LoadHistoricalDataAsync(int numberOfDAys)
+    public async Task LoadHistoricalDataAsync(int numberOfDays)
     {
-        // check assets table
         // clear MarketData table
         // repopulate MarketData table -1000 days
         _logger.LogInformation("{var1} - {var2} - Initializing", nameof(ExternalDataService), nameof(LoadHistoricalDataAsync));
-        await _dbContext.Database.ExecuteSqlRawAsync("DELETE FROM MarketData");
-        await UpdateDataAsync(numberOfDAys);
+        //await _dbContext.Database.ExecuteSqlRawAsync("DELETE FROM MarketData");
+        _dbContext.MarketData.RemoveRange(_dbContext.MarketData);
+        await _dbContext.SaveChangesAsync();
+        await UpdateDataAsync(numberOfDays);
     }
     public async Task UpdateDataAsync(int numberOfDays = 30)
     {

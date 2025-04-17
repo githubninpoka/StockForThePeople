@@ -39,7 +39,10 @@ public class UpdateExternalDataBackgroundTask : IHostedService, IDisposable
 
             using IServiceScope scope = _serviceScopeFactory.CreateScope();
             IExternalDataService externalDataService = scope.ServiceProvider.GetRequiredService<IExternalDataService>();
-            await externalDataService.UpdateDataAsync();
+            
+            // commented out because restarting causes http 429 while developing...
+            //await externalDataService.UpdateDataAsync();
+
 
             // once the application is hosted somewhere, if ever, this needs to change to 24 hours.
             _timer.Period = Timeout.InfiniteTimeSpan;

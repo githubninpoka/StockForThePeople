@@ -53,9 +53,9 @@ namespace StockForThePeople.WebApi.Controllers
             {
                 return BadRequest("Try a described value");
             }
-            _logger.LogInformation("Calling the service. 1000 days!");
+            _logger.LogInformation("{var} - { var2} - Updating for {var3} days", nameof(DataManagementController),nameof(LoadHistoricalAsync),numberOfDays);
             await _externalDataService.LoadHistoricalDataAsync(); //I should probably not await here.
-            _logger.LogInformation("Ending the servicecall. 1000 days!");
+            _logger.LogInformation("{var} - { var2} - Done updating for {var3} days", nameof(DataManagementController), nameof(LoadHistoricalAsync), numberOfDays);
             return Ok("Updating data...");
         }
 

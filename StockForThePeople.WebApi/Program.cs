@@ -55,7 +55,7 @@ public class Program
         builder.Services.AddScoped<IExternalDataService, ExternalDataService>();
         builder.Services.AddScoped<IInternalDataService, InternalDataService>();
 
-        builder.Services.AddDbContext<StockForThePeopleSqliteContext>(options =>
+        builder.Services.AddDbContext<IStockForThePeopleContext, StockForThePeopleSqliteContext>(options =>
         {
             options.UseSqlite(builder.Configuration.GetConnectionString("StockForThePeopleDb"));
         });

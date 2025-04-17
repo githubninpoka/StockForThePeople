@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyModel;
 using StockForThePeople.Domain.Models;
 using System;
@@ -25,5 +26,10 @@ public class StockForThePeopleSqliteContext : DbContext, IStockForThePeopleConte
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+    }
+
+    public async Task SaveChangesAsync()
+    {
+        await base.SaveChangesAsync();
     }
 }

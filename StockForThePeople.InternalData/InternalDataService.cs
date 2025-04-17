@@ -12,15 +12,15 @@ namespace StockForThePeople.InternalData;
 
 public class InternalDataService : IInternalDataService
 {
-    private readonly StockForThePeopleSqliteContext _stockForThePeopleSqliteContext;
-    public InternalDataService(StockForThePeopleSqliteContext context)
+    private readonly IStockForThePeopleContext _stockForThePeopleContext;
+    public InternalDataService(IStockForThePeopleContext context)
     {
-        _stockForThePeopleSqliteContext = context;
+        _stockForThePeopleContext = context;
     }
     public async Task<List<AssetGetDtoList>> GetAllAssetsAsync()
     {
         List<AssetGetDtoList> returnable = new();
-        var domainAssets = _stockForThePeopleSqliteContext.Assets;
+        var domainAssets = _stockForThePeopleContext.Assets;
         foreach (var asset in domainAssets)
         {
             returnable.Add(new AssetGetDtoList()
@@ -35,7 +35,7 @@ public class InternalDataService : IInternalDataService
 
     public async Task<AssetGetDto> GetAssetByTickerAsync(string ticker)
     {
-        var returnable = await _stockForThePeopleSqliteContext.Assets.Where(x => x.Ticker == ticker).Select(y => new AssetGetDto()
+        var returnable = await _stockForThePeopleContext.Assets.Where(x => x.Ticker == ticker).Select(y => new AssetGetDto()
         {
             Id = y.Id,
             Name = y.Name,
@@ -54,7 +54,7 @@ public class InternalDataService : IInternalDataService
         DateTime fromDateTime = DateTime.Now - TimeSpan.FromDays(magicNumber);
         DateOnly fromDate = DateOnly.FromDateTime(fromDateTime);
         AssetGetDto asset = await GetAssetByTickerAsync(ticker);
-        List<MarketWithVolumeGetDto> market = await _stockForThePeopleSqliteContext.MarketData
+        List<MarketWithVolumeGetDto> market = await _stockForThePeopleContext.MarketData
             .Where(x => x.AssetId == asset.Id && x.Date >= fromDate)
             .OrderBy(z => z.Date)
             .Select(y => new MarketWithVolumeGetDto()
@@ -99,7 +99,7 @@ public class InternalDataService : IInternalDataService
         DateOnly fromDate = DateOnly.FromDateTime(fromDateTime);
 
         AssetGetDto asset = await GetAssetByTickerAsync(ticker);
-        List<MarketWithInformationGetDto> marketWithInformation = await _stockForThePeopleSqliteContext.MarketData
+        List<MarketWithInformationGetDto> marketWithInformation = await _stockForThePeopleContext.MarketData
             .Where(x => x.AssetId == asset.Id && x.Date >= fromDate && x.Date <= lastDate)
             .OrderBy(z => z.Date)
             .Select(y => new MarketWithInformationGetDto()
